@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from system import linear_space_system
+import control
+from system import linear_space_system, controller
 
 plt.style.use([
   'science',
@@ -14,10 +15,14 @@ plt.rcParams['font.size'] = 12
 sine_signal = np.load('./data/sine_signal.npy')
 
 A, B, C, D = linear_space_system()
+K = controller()
 
 initial_condition = np.array([
-  .0, np.pi, .0, .0
-]).T
+  [.0],
+  [np.radians(0.0005)],
+  [.0],
+  [.0]
+])
 
 x = np.copy(initial_condition)
 
@@ -33,52 +38,66 @@ alpha_values = np.zeros((iterations, 2))
 
 theta_errors = np.zeros((iterations, 1))
 
-theta_values[0] = [x[0], x[2]]
-alpha_values[0] = [x[1], x[3]]
+thetas = np.zeros((iterations, 1))
+alphas = np.zeros((iterations, 1))
 
-u = np.array([
-  0, 0, 0, 0
-])
+alpha_dot = np.zeros((iterations, 1))
+
+us = np.zeros((iterations, 1))
+
+c = .01
+s = control.tf([1, 0], [c, 1])
+
+Gd = control.c2d(s, .001, method='tustin')
 
 for i in range(1, iterations):
-  current_time = time[i]
-  delta_time = current_time - time[i - 1]
+  u = K @ x
 
   delta_system = (A @ x) + (B @ u)
-  x += delta_system * simulation_step
+  x += (delta_system * simulation_step)
 
-  y = C @ x
+  thetas[i] = x[0]
+  alphas[i] = x[1]
+  alpha_dot[i] = Gd(x[1])
+  us[i] = u
 
-  theta_values[i] = [y[0], y[2]]
-  alpha_values[i] = [y[1], y[3]]
 
-fig1, axs = plt.subplots(2, 2, figsize=(10, 10))
+fig, axs = plt.subplots(4, 1)
 
-axs[0][0].plot(time, theta_values[:, 0], color='blue')
+axs[0].plot(time, thetas, label='theta')
+axs[1].plot(time, alphas, label='alpha')
+axs[2].plot(time, us, label='theta')
+axs[3].plot(time, alpha_dot, label='alpha')
 
-axs[0][0].legend(['theta'])
-axs[0][0].set_xlabel('time [s]')
-axs[0][0].set_ylabel('angle [rad]')
-
-axs[0][1].plot(time, theta_values[:, 1], color='blue')
-
-axs[0][1].legend(['theta dot'])
-axs[0][1].set_xlabel('time [s]')
-axs[0][1].set_ylabel('angle [rad/s]')
-
-# # # # # # # # # # # # # # # # # # # #
-
-axs[1][0].plot(time, alpha_values[:, 0], color='red')
-
-axs[1][0].legend(['alpha'])
-axs[1][0].set_xlabel('time [s]')
-axs[1][0].set_ylabel('angle [rad]')
-
-axs[1][1].plot(time, alpha_values[:, 1], color='red')
-
-axs[1][1].legend(['alpha dot'])
-axs[1][1].set_xlabel('time [s]')
-axs[1][1].set_ylabel('angle [rad/s]')
-
-plt.savefig('./figures/sine_signal.png', dpi=300)
 plt.show()
+
+# fig1, axs = plt.subplots(2, 2, figsize=(10, 10))
+#
+# axs[0][0].plot(time, theta_values[:, 0], color='blue')
+#
+# axs[0][0].legend(['theta'])
+# axs[0][0].set_xlabel('time [s]')
+# axs[0][0].set_ylabel('angle [rad]')
+#
+# axs[0][1].plot(time, theta_values[:, 1], color='blue')
+#
+# axs[0][1].legend(['theta dot'])
+# axs[0][1].set_xlabel('time [s]')
+# axs[0][1].set_ylabel('angle [rad/s]')
+#
+# # # # # # # # # # # # # # # # # # # # #
+#
+# axs[1][0].plot(time, alpha_values[:, 0], color='red')
+#
+# axs[1][0].legend(['alpha'])
+# axs[1][0].set_xlabel('time [s]')
+# axs[1][0].set_ylabel('angle [rad]')
+#
+# axs[1][1].plot(time, alpha_values[:, 1], color='red')
+#
+# axs[1][1].legend(['alpha dot'])
+# axs[1][1].set_xlabel('time [s]')
+# axs[1][1].set_ylabel('angle [rad/s]')
+#
+# plt.savefig('./figures/sine_signal.png', dpi=300)
+# plt.show()
