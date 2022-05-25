@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class Quantity:
   def __init__(self, value, unit):
     self.value = value
@@ -54,8 +53,3 @@ D = np.array([
 def linear_space_system():
   return A, B, C, D
 
-
-def controller():
-  return np.array([
-    [0.49188105], [-51.53686349], [1.1991295],  [-6.675676]
-  ]).T

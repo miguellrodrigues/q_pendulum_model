@@ -1,20 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from system import linear_space_system, controller
+from system import linear_space_system
+from controller import find_controller
 
-plt.style.use([
-  'science',
-  'nature',
-  'grid',
-])
-
-plt.rcParams["font.family"] = "FreeSerif, Regular"
-plt.rcParams['font.size'] = 12
 
 sine_signal = np.load('./data/sine_signal.npy')
 
 A, B, C, D = linear_space_system()
-K = controller()
+K = find_controller()
 
 initial_condition = np.array([
   [.0],
