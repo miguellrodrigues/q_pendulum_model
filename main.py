@@ -28,7 +28,7 @@ initial_condition = np.array([
 
 x = np.copy(initial_condition)
 
-simulation_time = 15
+simulation_time = 5
 simulation_step = 1e-3
 
 iterations = int(simulation_time / simulation_step)
@@ -37,6 +37,9 @@ time = np.arange(0, simulation_time, simulation_step)
 
 theta_values = np.zeros((iterations, 2))
 alpha_values = np.zeros((iterations, 2))
+
+theta_values[0] = np.array([x[0], x[2]]).T
+alpha_values[0] = np.array([x[1], x[3]]).T
 
 us = np.zeros((iterations, 1))
 
@@ -57,10 +60,10 @@ for i in range(1, iterations):
   theta_values[i] = np.array([x[0], x[2]]).T
   alpha_values[i] = np.array([x[1], x[3]]).T
 
-  [_, alpha_dot] = signal.dlsim(Gd, x[1])
+  [_, alpha_dot] = signal.dlsim(Gd, alpha_values[:i+1, 0], time[:i+1])
   us[i] = u
 
-  test[i] = alpha_dot
+  test[i] = alpha_dot[-1]
 
 
 fig1, axs = plt.subplots(2, 2, figsize=(10, 10))
