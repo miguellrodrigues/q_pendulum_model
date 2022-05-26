@@ -43,7 +43,7 @@ alpha_values[0] = np.array([x[1], x[3]]).T
 
 us = np.zeros((iterations, 1))
 
-c = .01
+c = .001
 G = ct.tf([1, 0], [c, 1])
 d_sys = ct.c2d(G, .001, 'tustin')
 

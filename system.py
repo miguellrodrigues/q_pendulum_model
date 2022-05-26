@@ -1,13 +1,5 @@
 import numpy as np
 
-class Quantity:
-  def __init__(self, value, unit):
-    self.value = value
-    self.unit = unit
-
-  def __repr__(self):
-    return f"{self.value}{self.unit}"
-
 
 Mp = .027
 lp = .200
