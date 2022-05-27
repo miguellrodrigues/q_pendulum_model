@@ -17,9 +17,9 @@ K = find_controller()
 
 initial_condition = np.array([
   [.0],
-  [np.radians(0)],
   [.0],
-  [np.radians(20)]
+  [.0],
+  [.0]
 ])
 
 xa = np.copy(initial_condition)
@@ -43,10 +43,10 @@ control_signal = np.zeros((samples, 1))
 for i in range(1, samples):
   u = K @ xa
 
-  if u[0] > 1:
-    u[0] = 1
-  elif u[0] < -1:
-    u[0] = -1
+  if u[0] > 10:
+    u[0] = 10
+  elif u[0] < -10:
+    u[0] = -10
 
   x = A @ xa + B @ u
   xa = x

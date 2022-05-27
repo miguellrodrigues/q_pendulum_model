@@ -13,7 +13,7 @@ W = cvx.Variable((n, n), symmetric=True)
 S = cvx.Variable((m, m), diag=True)
 Z = cvx.Variable((m, n))
 L = cvx.Variable((m, n))
-rho = 1
+rho = 10
 
 # # LMI 1
 LMI1_11 = -W
