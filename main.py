@@ -20,7 +20,7 @@ print('A + BK eigenvalues:', np.linalg.eigvals(A + B @ K))
 
 initial_condition = np.array([
   [.0],
-  [np.radians(10)],
+  [np.radians(5)],
   [.0],
   [.0]
 ])
