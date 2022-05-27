@@ -15,9 +15,12 @@ plt.rcParams['font.size'] = 12
 A, B, C, D = load_matrices()
 K = find_controller()
 
+print("A eigenvalues:", np.linalg.eigvals(A))
+print('A + BK eigenvalues:', np.linalg.eigvals(A + B @ K))
+
 initial_condition = np.array([
   [.0],
-  [.0],
+  [np.radians(10)],
   [.0],
   [.0]
 ])
