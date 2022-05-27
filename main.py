@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from system import linear_space_system, alpha_dot
+from system import load_matrices, var_dot
 from controller import find_controller
 
 plt.style.use([
@@ -12,50 +12,52 @@ plt.style.use([
 plt.rcParams["font.family"] = "FreeSerif, Regular"
 plt.rcParams['font.size'] = 12
 
-sine_signal = np.load('../data/sine_signal.npy')
-
-A, B, C, D = linear_space_system()
+A, B, C, D = load_matrices()
 K = find_controller()
 
 initial_condition = np.array([
   [.0],
-  [np.radians(10)],
+  [np.radians(0)],
   [.0],
-  [.0]
+  [np.radians(20)]
 ])
 
-x = np.copy(initial_condition)
+xa = np.copy(initial_condition)
+x = np.zeros((4, 1))
+
+samples = 10000
 
 simulation_time = 10
-simulation_step = 1e-3
-
-iterations = int(simulation_time / simulation_step)
+simulation_step = simulation_time / samples
 
 time = np.arange(0, simulation_time, simulation_step)
 
-theta_values = np.zeros((iterations, 2))
-alpha_values = np.zeros((iterations, 2))
+theta_values = np.zeros((samples, 2))
+alpha_values = np.zeros((samples, 2))
 
 theta_values[0] = np.array([x[0], x[2]]).T
 alpha_values[0] = np.array([x[1], x[3]]).T
 
-us = np.zeros((iterations, 1))
+control_signal = np.zeros((samples, 1))
 
-ad = np.zeros((iterations, 1))
+for i in range(1, samples):
+  u = K @ xa
 
-for i in range(1, iterations):
-  u = K @ x
+  if u[0] > 1:
+    u[0] = 1
+  elif u[0] < -1:
+    u[0] = -1
 
-  delta_system = (A @ x) + (B @ u)
-  x += (delta_system * simulation_step)
+  x = A @ xa + B @ u
+  xa = x
 
-  theta_values[i] = np.array([x[0], x[2]]).T
-  alpha_values[i] = np.array([x[1], x[3]]).T
+  theta_dot = var_dot(theta_values[i - 1, 1], theta_values[i - 1, 0], x[0])
+  alpha_dot = var_dot(alpha_values[i - 1, 1], alpha_values[i - 1, 0], x[1])
 
-  alpha_dot_k = alpha_dot(alpha_values[i - 1, 1], alpha_values[i - 1, 0], alpha_values[i, 0])
-  ad[i] = alpha_dot_k
+  theta_values[i] = np.array([x[0], theta_dot]).T
+  alpha_values[i] = np.array([x[1], alpha_dot]).T
 
-  us[i] = u
+  control_signal[i] = u
 
 
 fig1, axs = plt.subplots(2, 2, figsize=(10, 10))
@@ -81,7 +83,6 @@ axs[1][0].set_xlabel('time [s]')
 axs[1][0].set_ylabel('angle [rad]')
 
 axs[1][1].plot(time, alpha_values[:, 1], color='red')
-axs[1][1].plot(time, ad, '--', color='black')
 
 axs[1][1].legend(['alpha dot', 'alpha dot approximation'])
 axs[1][1].set_xlabel('time [s]')
@@ -91,7 +92,7 @@ plt.savefig('./figures/sim_states.png', dpi=300)
 
 fig2, axs = plt.subplots(1, 1, figsize=(10, 10))
 
-axs.plot(time, us, color='green')
+axs.plot(time, control_signal, color='green')
 axs.set_xlabel('time [s]')
 axs.set_ylabel('control input [V]')
 

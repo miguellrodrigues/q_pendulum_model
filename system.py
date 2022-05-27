@@ -1,6 +1,6 @@
 import numpy as np
 
-
+'''
 Mp = .027
 lp = .200
 r = .08260
@@ -18,34 +18,24 @@ Km = .028
 Mp2 = Mp ** 2
 lp2 = lp ** 2
 r2 = r ** 2
-
-A = np.array([
-  [0, 0, 1, 0],
-  [0, 0, 0, 1],
-  [0, (r * Mp2 * lp2 * g) / (Jp * Jeq + Mp * lp2 * Jeq + Jp * Mp * r2),
-   -(Kt * Km * (Jp + Mp * lp2)) / ((Jp * Jeq + Mp * lp2 * Jeq + Jp * Mp * r2) * Rm), 0],
-  [0, (Mp * lp * g * (Jeq + Mp * r2)) / (Jp * Jeq + Mp * lp2 * Jeq + Jp * Mp * r2),
-   -(Mp * lp * Kt * r * Km) / ((Jp * Jeq + Mp * lp2 * Jeq + Jp * Mp * r2) * Rm), 0]
-])
-
-B = np.array([
-  [0],
-  [0],
-  [(Kt * (Jp + Mp * lp2)) / ((Jp * Jeq + Mp * lp2 * Jeq + Jp * Mp * r2) * Rm)],
-  [(Mp * lp * Kt * r) / ((Jp * Jeq + Mp * lp2 * Jeq + Jp * Mp * r2) * Rm)]
-])
-
-C = np.eye(4)
-
-D = np.array([
-  0, 0, 0, 0
-]).T
+'''
 
 
-def alpha_dot(prev_alpha_dot, prev_alpha, alpha):
-  return .9048 * prev_alpha_dot + 95.24 * alpha - 95.24 * prev_alpha
+def var_dot(prev_dot, prev_var, var):
+  return (.9048 * prev_dot) + (95.24 * var) - (95.24 * prev_var)
 
 
-def linear_space_system():
+def load_matrices(continuous=False):
+  f = './data/'
+
+  if continuous:
+    f += 'continuous_system/'
+  else:
+    f += 'discrete_system/'
+
+  A = np.load(f + 'A.npy')
+  B = np.load(f + 'B.npy')
+  C = np.load(f + 'C.npy')
+  D = np.load(f + 'D.npy')
+
   return A, B, C, D
-
