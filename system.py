@@ -42,6 +42,10 @@ D = np.array([
 ]).T
 
 
+def alpha_dot(prev_alpha_dot, prev_alpha, alpha):
+  return .9048 * prev_alpha_dot + 95.24 * alpha - 95.24 * prev_alpha
+
+
 def linear_space_system():
   return A, B, C, D
 

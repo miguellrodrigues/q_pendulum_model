@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import control as ct
-import scipy.signal as signal
-from system import linear_space_system
+from system import linear_space_system, alpha_dot
 from controller import find_controller
 
 plt.style.use([
@@ -14,7 +12,7 @@ plt.style.use([
 plt.rcParams["font.family"] = "FreeSerif, Regular"
 plt.rcParams['font.size'] = 12
 
-sine_signal = np.load('./data/sine_signal.npy')
+sine_signal = np.load('../data/sine_signal.npy')
 
 A, B, C, D = linear_space_system()
 K = find_controller()
@@ -28,7 +26,7 @@ initial_condition = np.array([
 
 x = np.copy(initial_condition)
 
-simulation_time = 5
+simulation_time = 10
 simulation_step = 1e-3
 
 iterations = int(simulation_time / simulation_step)
@@ -43,13 +41,7 @@ alpha_values[0] = np.array([x[1], x[3]]).T
 
 us = np.zeros((iterations, 1))
 
-c = .001
-G = ct.tf([1, 0], [c, 1])
-d_sys = ct.c2d(G, .001, 'tustin')
-
-Gd = signal.dlti(d_sys.num[0][0], d_sys.den[0][0], dt=.001)
-
-test = np.zeros((iterations, 1))
+ad = np.zeros((iterations, 1))
 
 for i in range(1, iterations):
   u = K @ x
@@ -60,10 +52,10 @@ for i in range(1, iterations):
   theta_values[i] = np.array([x[0], x[2]]).T
   alpha_values[i] = np.array([x[1], x[3]]).T
 
-  [_, alpha_dot] = signal.dlsim(Gd, alpha_values[:i+1, 0], time[:i+1])
-  us[i] = u
+  alpha_dot_k = alpha_dot(alpha_values[i - 1, 1], alpha_values[i - 1, 0], alpha_values[i, 0])
+  ad[i] = alpha_dot_k
 
-  test[i] = alpha_dot[-1]
+  us[i] = u
 
 
 fig1, axs = plt.subplots(2, 2, figsize=(10, 10))
@@ -89,7 +81,7 @@ axs[1][0].set_xlabel('time [s]')
 axs[1][0].set_ylabel('angle [rad]')
 
 axs[1][1].plot(time, alpha_values[:, 1], color='red')
-axs[1][1].plot(time, test, '--', color='black')
+axs[1][1].plot(time, ad, '--', color='black')
 
 axs[1][1].legend(['alpha dot', 'alpha dot approximation'])
 axs[1][1].set_xlabel('time [s]')

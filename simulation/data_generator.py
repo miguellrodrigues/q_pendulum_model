@@ -17,4 +17,4 @@ def sine_wave_signal(t, t_step):
 
 # generate a sinewave signal with 60 Hz and amplitude of 1
 signal = sine_wave_signal(t=10, t_step=1e-3)
-np.save('./data/sine_signal.npy', signal)
+np.save('../data/sine_signal.npy', signal)
