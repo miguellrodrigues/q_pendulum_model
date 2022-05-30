@@ -53,8 +53,8 @@ LMI2 = cvx.vstack([LMI2_1, LMI2_2])
 # # END LMI 2
 
 constraints = [
-  LMI1 << -np.eye(9) * 1e-9,
-  LMI2 >> np.eye(5) * 1e-9,
+  LMI1 << -np.eye(LMI1.shape[0]) * 1e-9,
+  LMI2 >> np.eye(LMI2.shape[0]) * 1e-9,
 ]
 
 

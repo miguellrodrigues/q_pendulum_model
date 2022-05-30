@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import control as cnt
 from system import load_matrices, var_dot
 from controller import find_controller
 
@@ -20,39 +21,33 @@ print('A + BK eigenvalues:', np.linalg.eigvals(A + B @ K))
 
 initial_condition = np.array([
   [.0],
-  [np.radians(5)],
+  [np.radians(10)],
   [.0],
   [.0]
 ])
 
-xa = np.copy(initial_condition)
+xk = np.copy(initial_condition)
 x = np.zeros((4, 1))
 
 samples = 10000
+simulation_step = 1e-3
 
-simulation_time = 10
-simulation_step = simulation_time / samples
-
-time = np.arange(0, simulation_time, simulation_step)
+time = np.arange(0, samples*simulation_step, simulation_step)
 
 theta_values = np.zeros((samples, 2))
 alpha_values = np.zeros((samples, 2))
 
-theta_values[0] = np.array([x[0], x[2]]).T
-alpha_values[0] = np.array([x[1], x[3]]).T
+theta_values[0] = np.array([xk[0], xk[2]]).T
+alpha_values[0] = np.array([xk[1], xk[3]]).T
 
 control_signal = np.zeros((samples, 1))
 
+
 for i in range(1, samples):
-  u = K @ xa
+  u = K @ xk
 
-  if u[0] > 10:
-    u[0] = 10
-  elif u[0] < -10:
-    u[0] = -10
-
-  x = A @ xa + B @ u
-  xa = x
+  x = A @ xk + B @ u
+  xk = x
 
   theta_dot = var_dot(theta_values[i - 1, 1], theta_values[i - 1, 0], x[0])
   alpha_dot = var_dot(alpha_values[i - 1, 1], alpha_values[i - 1, 0], x[1])
