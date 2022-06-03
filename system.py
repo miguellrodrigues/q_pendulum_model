@@ -1,6 +1,5 @@
 import numpy as np
 
-
 Mp = .027
 lp = .153
 r = .08260
@@ -17,29 +16,26 @@ r2 = r ** 2
 
 
 def A(Z1, Z2, Z3, Z4):
-    beta = (Mp*r2*Z2 - Jeq -Mp*r2)*Jp - Mp*lp2*Jeq
+  beta = (Mp * r2 * Z2 - Jeq - Mp * r2) * Jp - Mp * lp2 * Jeq
 
-    A = np.array([
-        [0, 0, 1, 0],
-        [0, 0, 0, 1],
-        [0, -(Mp2*g*lp2 * Z1) / beta, -((Jp*Mp*r2 * Z3) / beta) - ((Kt*Km*(-Jp+Mp*lp2)) / (beta * Rm)), 0],
-        [0, -(lp*Mp * (-Jeq*g*Mp*r2 * Z2 * g - Mp*r2*g)) / beta, - ((lp*Mp*r*Jeq * Z4) / beta) - ((lp*Mp*r*Kt*Km * Z1) / (beta*Rm)), 0]
-    ])
+  return np.array([
+    [0, 0, 1, 0],
+    [0, 0, 0, 1],
+    [0, -(Mp2 * g * lp2 * Z1) / beta, -((Jp * Mp * r2 * Z3) / beta) - ((Kt * Km * (-Jp + Mp * lp2)) / (beta * Rm)), 0],
+    [0, -(lp * Mp * (-Jeq * g * Mp * r2 * Z2 * g - Mp * r2 * g)) / beta,
+     - ((lp * Mp * r * Jeq * Z4) / beta) - ((lp * Mp * r * Kt * Km * Z1) / (beta * Rm)), 0]
+  ])
 
-    return A
 
-  
 def B(Z1, Z2):
-    beta = (Mp*r2*Z2 - Jeq -Mp*r2)*Jp - Mp*lp2*Jeq
+  beta = (Mp * r2 * Z2 - Jeq - Mp * r2) * Jp - Mp * lp2 * Jeq
 
-    B = np.array([
-        [0],
-        [0],
-        [(Kt * (-Jp + Mp * lp2)) / (beta*Rm)],
-        [(Mp * lp * Kt * r * Z1) / (beta*Rm)]
-    ]).T
-
-    return B
+  return np.array([
+    [0],
+    [0],
+    [(Kt * (-Jp + Mp * lp2)) / (beta * Rm)],
+    [(Mp * lp * Kt * r * Z1) / (beta * Rm)]
+  ]).T
 
 
 def var_dot(prev_dot, prev_var, var):
@@ -54,9 +50,9 @@ def load_matrices(continuous=False):
   else:
     f += 'discrete_system/'
 
-  A = np.load(f + 'A.npy')
-  B = np.load(f + 'B.npy')
-  C = np.load(f + 'C.npy')
-  D = np.load(f + 'D.npy')
+  _A = np.load(f + 'A.npy')
+  _B = np.load(f + 'B.npy')
+  _C = np.load(f + 'C.npy')
+  _D = np.load(f + 'D.npy')
 
-  return A, B, C, D
+  return _A, _B, _C, _D

@@ -1,5 +1,4 @@
 import sympy as sp
-import numpy as np
 
 
 def line_a_b(a, b):
@@ -24,8 +23,11 @@ def line_a_b(a, b):
   })
 
 
-p1 = [sp.rad(20) -sp.pi/4, -1]
-p2 = [-sp.rad(20) + sp.pi/4, 1]
+# binary counting from  0 to 16
+def binary_counting(n):
+  res = []
+  for i in range(n + 1):
+    res.append(bin(i)[2:])
+  return res
 
-line = line_a_b(p1, p2)
-print(line)
+print(binary_counting(16))
