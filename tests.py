@@ -24,8 +24,8 @@ def line_a_b(a, b):
   })
 
 
-p1 = [np.pi, 1]
-p2 = [-np.pi, -1]
+p1 = [sp.rad(20) -sp.pi/4, -1]
+p2 = [-sp.rad(20) + sp.pi/4, 1]
 
 line = line_a_b(p1, p2)
 print(line)

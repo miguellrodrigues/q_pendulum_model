@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import control as cnt
 from system import load_matrices, var_dot
 from controller import find_controller
 
