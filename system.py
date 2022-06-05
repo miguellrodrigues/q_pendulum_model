@@ -21,9 +21,8 @@ def A(Z1, Z2, Z3, Z4):
   return np.array([
     [0, 0, 1, 0],
     [0, 0, 0, 1],
-    [0, -(Mp2 * g * lp2 * Z1) / beta, -((Jp * Mp * r2 * Z3) / beta) - ((Kt * Km * (-Jp + Mp * lp2)) / (beta * Rm)), 0],
-    [0, -(lp * Mp * (-Jeq * g * Mp * r2 * Z2 * g - Mp * r2 * g)) / beta,
-     - ((lp * Mp * r * Jeq * Z4) / beta) - ((lp * Mp * r * Kt * Km * Z1) / (beta * Rm)), 0]
+    [0, (Mp2 * g * lp2 * r * Z1) / beta, -((Jp * Mp * r2 * Z3) / beta) - ((Kt * Km * (Jp + Mp * lp2)) / (beta * Rm)), 0],
+    [0, (lp * Mp * (-Jeq * g + Mp * r2 * Z2 * g - Mp * r2 * g)) / beta, -((lp * Mp * r * Jeq * Z4) / beta) - ((lp * Mp * r * Kt * Km * Z1) / (beta * Rm)), 0]
   ])
 
 

@@ -11,10 +11,10 @@ plt.style.use([
 
 # system data
 
-z1_min, z1_max = 0, 1
+z1_min, z1_max = -1, 1
 z2_min, z2_max = 0, 1
-z3_min, z3_max = -np.pi / 2, np.pi / 2
-z4_min, z4_max = -np.pi, np.pi
+z3_min, z3_max = -np.pi, np.pi
+z4_min, z4_max = -2*np.pi, 2*np.pi
 
 A_matrices = [
   A(z1_min, z2_min, z3_min, z4_min),
@@ -88,11 +88,11 @@ def z4(a, b):
 # pertinence functions
 
 def M1(a):
-  return 1 - z1(a)
+  return (1 - z1(a)) / 2.0
 
 
 def M2(a):
-  return 1 - M1(a)
+  return (1 + z1(a)) / 2.0
 
 
 def N1(a):
@@ -100,23 +100,23 @@ def N1(a):
 
 
 def N2(a):
-  return 1 - N1(a)
+  return z2(a)
 
 
 def P1(a, b):
-  return (-4 * z3(a, b) + 2 * np.pi) / (4 * np.pi)
+  return (np.pi - z3(a, b)) / (2 * np.pi)
 
 
 def P2(a, b):
-  return 1 - P1(a, b)
+  return (np.pi + z3(a, b)) / (2 * np.pi)
 
 
 def Q1(a, b):
-  return (2 * np.pi - z4(a, b)) / (2 * np.pi)
+  return ((2 * np.pi) - z4(a, b)) / (4 * np.pi)
 
 
 def Q2(a, b):
-  return 1 - Q1(a, b)
+  return ((2 * np.pi) + z4(a, b)) / (4 * np.pi)
 
 
 pertinence_functions = np.array([
@@ -130,14 +130,14 @@ pertinence_functions = np.array([
 
 initial_conditions = np.array([
   [.0],
-  [np.deg2rad(45)],
+  [np.deg2rad(5)],
   [.0],
   [.0]
 ])
 
 x = np.copy(initial_conditions)
 
-simulation_time = 10  # seconds
+simulation_time = 5  # seconds
 simulation_step = 1e-3
 
 iterations = int(simulation_time / simulation_step)
@@ -158,7 +158,7 @@ u = np.array([
 
 for i in range(1, iterations):
   theta = theta_values[i - 1, 0]
-  theta_dot = np.clip(theta_values[i - 1, 1], -np.pi, np.pi)
+  theta_dot = np.clip(theta_values[i - 1, 1], -2*np.pi, 2*np.pi)
 
   # calculating the pertinence functions activation values
 
