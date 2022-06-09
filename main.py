@@ -48,7 +48,8 @@ u = np.array([
 ])
 
 for i in range(1, samples):
-  _A = A(x[1][0], x[3][0])
+  alpha_dot = np.clip(alpha_values[i - 1, 1], -2*np.pi, 2*np.pi)
+  _A = A(x[1][0], alpha_dot)
 
   delta_sys = _A @ x
   x += delta_sys * simulation_step
