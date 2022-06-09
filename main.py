@@ -1,7 +1,7 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from system import load_matrices, var_dot, A, B
-from controller import find_controller
+import numpy as np
+
+from system import A, B
 
 plt.style.use([
   'science',
@@ -9,36 +9,89 @@ plt.style.use([
   'grid',
 ])
 
-plt.rcParams["font.family"] = "FreeSerif, Regular"
-plt.rcParams['font.size'] = 12
+# system data
 
-# A, B, C, D = load_matrices()
-# K = find_controller()
+z1_min, z1_max = -1, 1
+z2_min, z2_max = 0, 1
+z3_min, z3_max = -2*np.pi, 2*np.pi
 
-# print("A eigenvalues:", np.linalg.eigvals(A))
-# print('A + BK eigenvalues:', np.linalg.eigvals(A + B @ K))
+A_matrices = [
+  A(z1_min, z2_min, z3_min),
+  A(z1_min, z2_min, z3_max),
+  A(z1_min, z2_max, z3_min),
+  A(z1_min, z2_max, z3_max),
+  A(z1_max, z2_min, z3_min),
+  A(z1_max, z2_min, z3_max),
+  A(z1_max, z2_max, z3_min),
+  A(z1_max, z2_max, z3_max),
+]
 
-initial_condition = np.array([
+B_matrices = [
+  B(z1_min),
+  B(z1_min),
+  B(z1_min),
+  B(z1_min),
+  B(z1_max),
+  B(z1_max),
+  B(z1_max),
+  B(z1_max),
+]
+
+n = len(A_matrices)
+
+A_rows = A_matrices[0].shape[0]
+A_cols = A_matrices[0].shape[1]
+
+B_rows = B_matrices[0].shape[0]
+B_cols = B_matrices[0].shape[1]
+
+
+# premisses
+def z1(a): return np.cos(a)
+def z2(a): return np.sin(a) / a
+def z3(a, ad): return np.sin(a) * ad
+
+
+# pertinence functions
+def M1(a): return .500001236173694*z1(a) + .500001236173694
+def N1(a): return 1.00000164823078*z2(a)
+def P1(a, ad): return .0795775699174638*z3(a, ad) + 0.499999999999999
+
+
+# complements
+def M2(a): return 1 - M1(a)
+def N2(a): return 1 - N1(a)
+def P2(a, ad): return 1 - P1(a, ad)
+
+
+pertinence_functions = np.array([
+  [M1, M2],
+  [N1, N2],
+  [P1, P2],
+])
+
+# simulation
+
+initial_conditions = np.array([
   [.0],
-  [np.pi - np.pi/2],
+  [.00001],
   [.0],
   [.0]
 ])
 
-x = np.copy(initial_condition)
+x = np.copy(initial_conditions)
 
-samples = 10000
+simulation_time = 10  # seconds
 simulation_step = 1e-3
 
-time = np.arange(0, samples*simulation_step, simulation_step)
+iterations = int(simulation_time / simulation_step)
+time_values = np.arange(0, simulation_time, simulation_step)
 
-theta_values = np.zeros((samples, 2))
-alpha_values = np.zeros((samples, 2))
+theta_values = np.zeros((iterations, 2))
+alpha_values = np.zeros((iterations, 2))
 
-theta_values[0] = np.array([x[0], x[2]]).T
-alpha_values[0] = np.array([x[1], x[3]]).T
-
-control_signal = np.zeros((samples, 1))
+theta_values[0] = np.array([initial_conditions[0], initial_conditions[2]]).T
+alpha_values[0] = np.array([initial_conditions[1], initial_conditions[3]]).T
 
 u = np.array([
   [.0],
@@ -47,25 +100,50 @@ u = np.array([
   [.0]
 ])
 
-for i in range(1, samples):
-  _A = A(x[1][0], x[3][0])
+for i in range(1, iterations):
+  alpha = alpha_values[i - 1, 0]
+  alpha_dot = np.clip(alpha_values[i - 1, 1], z3_min, z3_max)
 
-  delta_sys = _A @ x
-  x += delta_sys * simulation_step
+  # calculating the pertinence functions activation values
+
+  pertinence_values = np.array([
+    [pertinence_functions[0, 0](alpha), pertinence_functions[0, 1](alpha)],
+    [pertinence_functions[1, 0](alpha), pertinence_functions[1, 1](alpha)],
+    [pertinence_functions[2, 0](alpha, alpha_dot), pertinence_functions[2, 1](alpha, alpha_dot)],
+  ])
+
+  # calculating weights
+  weights = np.array([
+    pertinence_values[0, 1] * pertinence_values[1, 1] * pertinence_values[2, 1],
+    pertinence_values[0, 1] * pertinence_values[1, 1] * pertinence_values[2, 0],
+    pertinence_values[0, 1] * pertinence_values[1, 0] * pertinence_values[2, 1],
+    pertinence_values[0, 1] * pertinence_values[1, 0] * pertinence_values[2, 0],
+    pertinence_values[0, 0] * pertinence_values[1, 1] * pertinence_values[2, 1],
+    pertinence_values[0, 0] * pertinence_values[1, 1] * pertinence_values[2, 0],
+    pertinence_values[0, 0] * pertinence_values[1, 0] * pertinence_values[2, 1],
+    pertinence_values[0, 0] * pertinence_values[1, 0] * pertinence_values[2, 0],
+  ])
+
+  # Calculating Ai and Bi
+  # Ai = w1*A1 + w2*A2 + w3*A3 + w4*A4 ...
+  Ai = sum(weights[j] * A_matrices[j] for j in range(n))
+  Bi = sum(weights[j] * B_matrices[j] for j in range(n))
+
+  delta_system = Ai @ x
+  x += delta_system * simulation_step
 
   theta_values[i] = np.array([x[0], x[2]]).T
   alpha_values[i] = np.array([x[1], x[3]]).T
 
-
 fig1, axs = plt.subplots(2, 2, figsize=(10, 10))
 
-axs[0][0].plot(time, theta_values[:, 0], color='blue')
+axs[0][0].plot(time_values, theta_values[:, 0], color='blue')
 
 axs[0][0].legend(['theta'])
 axs[0][0].set_xlabel('time [s]')
 axs[0][0].set_ylabel('angle [rad]')
 
-axs[0][1].plot(time, theta_values[:, 1], color='blue')
+axs[0][1].plot(time_values, theta_values[:, 1], color='blue')
 
 axs[0][1].legend(['theta dot'])
 axs[0][1].set_xlabel('time [s]')
@@ -73,25 +151,17 @@ axs[0][1].set_ylabel('angle [rad/s]')
 
 # # # # # # # # # # # # # # # # # # # #
 
-axs[1][0].plot(time, alpha_values[:, 0], color='red')
+axs[1][0].plot(time_values, alpha_values[:, 0], color='red')
 
 axs[1][0].legend(['alpha'])
 axs[1][0].set_xlabel('time [s]')
 axs[1][0].set_ylabel('angle [rad]')
 
-axs[1][1].plot(time, alpha_values[:, 1], color='red')
+axs[1][1].plot(time_values, alpha_values[:, 1], color='red')
 
 axs[1][1].legend(['alpha dot', 'alpha dot approximation'])
 axs[1][1].set_xlabel('time [s]')
 axs[1][1].set_ylabel('angle [rad/s]')
 
 plt.savefig('./figures/sim_states.png', dpi=300)
-
-fig2, axs = plt.subplots(1, 1, figsize=(10, 10))
-
-axs.plot(time, control_signal, color='green')
-axs.set_xlabel('time [s]')
-axs.set_ylabel('control input [V]')
-
-plt.savefig('./figures/sim_u.png', dpi=300)
 plt.show()

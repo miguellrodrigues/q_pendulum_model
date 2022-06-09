@@ -2,21 +2,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 
-
 plt.style.use([
   'science',
   'nature',
   'grid',
 ])
 
-
 np.set_printoptions(precision=3, suppress=True)
 
 
 # defining premisses
 def z1(alpha): return np.cos(alpha)
-def z2(alpha): return np.sin(alpha) * (1 / alpha)
-def z3(alpha, alpha_dot): return np.cos(alpha) * np.sin(alpha) * alpha_dot
+
+
+def z2(alpha): return np.sin(alpha) / alpha
+
+
+def z3(alpha, ad): return np.sin(alpha) * ad
 
 
 interval = np.array([
@@ -24,7 +26,7 @@ interval = np.array([
 ])
 
 # defining |alpha_dot|
-alpha_dot = 2*np.pi
+alpha_dot = 2 * np.pi
 
 x = np.linspace(interval[0], interval[1], 1000)
 
@@ -108,9 +110,11 @@ _M1 = sp.lambdify(Z1, M1)
 _N1 = sp.lambdify(Z2, N1)
 _P1 = sp.lambdify(Z3, P1)
 
-_M2 = 1 - _M1
-_N2 = 1 - _N1
-_P2 = 1 - _P1
+
+def _M2(a): 1 - _M1(a)
+def _N2(a): 1 - _N1(a)
+def _P2(a): 1 - _P1(a)
+
 
 # # # # Plotting
 
@@ -136,5 +140,3 @@ axs[2].plot(y_3, P2_values, label='P2')
 # # # #
 
 plt.show()
-
-

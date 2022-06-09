@@ -20,31 +20,31 @@ a = Jeq + Mp * r2
 b = Mp * lp * r
 c = (Jp + Mp * lp2)
 d = Mp * g * lp
+e = Beq + (Kt * Km) / Rm
+f = Kt / Km
 
 G = (Kt * Km) / Rm
 
 
-def A(alpha, alpha_dot):
-  E = a * c - ((b ** 2) * (np.cos(alpha) ** 2))
+def A(Z1, Z2, Z3):
+  E = a * c - ((b ** 2) * (Z1 ** 2))
 
   return np.array([
     [0, 0, 1, 0],
     [0, 0, 0, 1],
-    [0, (b * d * np.sin(alpha) * np.cos(alpha)) / (E * alpha), -((Beq + G) * c) / E,
-     -(b * Bp + b * c * np.sin(alpha) * alpha_dot) / E],
-    [0, (a * d * np.sin(alpha)) / (E * alpha), -(b * (G + Beq) * np.cos(alpha)) / E,
-     -((b ** 2) * alpha_dot * np.sin(alpha) * np.cos(alpha) + Bp) / E]
+    [0, (b * d * Z1 * Z2) / E, -(c * e) / E, -(b * c * Z3) / E],
+    [0, (a * d * Z2) / E, -(b * e * Z1) / E, -((b ** 2) * Z1 * Z3) / E]
   ])
 
 
-def B(alpha):
-  E = a * c - b ** 2 * np.cos(alpha) ** 2
+def B(Z1):
+  E = a * c - ((b ** 2) * (Z1 ** 2))
 
   return np.array([
     [0],
     [0],
-    [((c * Kt) / Rm) / E],
-    [((b * Kt) / (Rm * np.cos(alpha))) / E]
+    [(c * f) / E],
+    [(b * f * Z1) / E]
   ]).T
 
 
