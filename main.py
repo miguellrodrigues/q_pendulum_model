@@ -20,7 +20,7 @@ plt.rcParams['font.size'] = 12
 
 initial_condition = np.array([
   [.0],
-  [np.pi - np.pi/2],
+  [.00001],
   [.0],
   [.0]
 ])
@@ -56,6 +56,9 @@ for i in range(1, samples):
   theta_values[i] = np.array([x[0], x[2]]).T
   alpha_values[i] = np.array([x[1], x[3]]).T
 
+# saving the data
+np.save('nl_theta_values.npy', theta_values)
+np.save('nl_alpha_values.npy', alpha_values)
 
 fig1, axs = plt.subplots(2, 2, figsize=(10, 10))
 
