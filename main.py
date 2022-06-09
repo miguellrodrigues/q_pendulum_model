@@ -81,11 +81,12 @@ initial_conditions = np.array([
 
 x = np.copy(initial_conditions)
 
-simulation_time = 10  # seconds
+samples = 10000
 simulation_step = 1e-3
 
-iterations = int(simulation_time / simulation_step)
-time_values = np.arange(0, simulation_time, simulation_step)
+time_values = np.arange(0, samples*simulation_step, simulation_step)
+
+iterations = len(time_values)
 
 theta_values = np.zeros((iterations, 2))
 alpha_values = np.zeros((iterations, 2))
@@ -134,6 +135,10 @@ for i in range(1, iterations):
 
   theta_values[i] = np.array([x[0], x[2]]).T
   alpha_values[i] = np.array([x[1], x[3]]).T
+
+# saving the data
+np.save('theta_values.npy', theta_values)
+np.save('alpha_values.npy', alpha_values)
 
 fig1, axs = plt.subplots(2, 2, figsize=(10, 10))
 
