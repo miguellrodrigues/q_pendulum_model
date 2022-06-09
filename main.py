@@ -86,10 +86,8 @@ simulation_step = 1e-3
 
 time_values = np.arange(0, samples*simulation_step, simulation_step)
 
-iterations = len(time_values)
-
-theta_values = np.zeros((iterations, 2))
-alpha_values = np.zeros((iterations, 2))
+theta_values = np.zeros((samples, 2))
+alpha_values = np.zeros((samples, 2))
 
 theta_values[0] = np.array([initial_conditions[0], initial_conditions[2]]).T
 alpha_values[0] = np.array([initial_conditions[1], initial_conditions[3]]).T
@@ -101,7 +99,7 @@ u = np.array([
   [.0]
 ])
 
-for i in range(1, iterations):
+for i in range(1, samples):
   alpha = alpha_values[i - 1, 0]
   alpha_dot = np.clip(alpha_values[i - 1, 1], z3_min, z3_max)
 
