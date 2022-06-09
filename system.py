@@ -30,8 +30,9 @@ def A(alpha, alpha_dot):
   return np.array([
     [0, 0, 1, 0],
     [0, 0, 0, 1],
-    [0, ((b * d * np.sin(alpha) * np.cos(alpha)) / alpha) / E, -((Beq + G) * c) / E, -(b * Bp + b*c * np.sin(alpha) * alpha_dot) / E],
-    [0, ((a * d * np.sin(alpha)) / alpha) / E, -(b * (G + Beq) * np.cos(alpha)) / E,
+    [0, (b * d * np.sin(alpha) * np.cos(alpha)) / (E * alpha), -((Beq + G) * c) / E,
+     -(b * Bp + b * c * np.sin(alpha) * alpha_dot) / E],
+    [0, (a * d * np.sin(alpha)) / (E * alpha), -(b * (G + Beq) * np.cos(alpha)) / E,
      -((b ** 2) * alpha_dot * np.sin(alpha) * np.cos(alpha) + Bp) / E]
   ])
 

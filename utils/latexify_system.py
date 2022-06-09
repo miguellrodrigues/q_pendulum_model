@@ -38,6 +38,6 @@ _a, a_dot = sp.symbols('alpha \dot{\\alpha}')
 _A = A(_a, a_dot)
 _B = B(_a)
 
-sp.print_latex(_A)
+sp.pprint(_A)
 print(' ')
 sp.print_latex(_B)

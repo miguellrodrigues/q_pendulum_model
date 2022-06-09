@@ -108,6 +108,10 @@ _M1 = sp.lambdify(Z1, M1)
 _N1 = sp.lambdify(Z2, N1)
 _P1 = sp.lambdify(Z3, P1)
 
+_M2 = 1 - _M1
+_N2 = 1 - _N1
+_P2 = 1 - _P1
+
 # # # # Plotting
 
 M1_values = _M1(y_1)

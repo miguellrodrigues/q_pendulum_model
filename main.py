@@ -20,7 +20,7 @@ plt.rcParams['font.size'] = 12
 
 initial_condition = np.array([
   [.0],
-  [0.1],
+  [np.pi - np.pi/2],
   [.0],
   [.0]
 ])
