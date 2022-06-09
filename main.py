@@ -53,9 +53,9 @@ def z3(a, ad): return np.sin(a) * ad
 
 
 # pertinence functions
-def M1(a): return .500001236173694*z1(a) + .500001236173694
-def N1(a): return 1.00000164823078*z2(a)
-def P1(a, ad): return .0795775699174638*z3(a, ad) + 0.499999999999999
+def M1(a): return .5*z1(a) + .5
+def N1(a): return z2(a)
+def P1(a, ad): return .0795775699174638*z3(a, ad) + .5
 
 
 # complements
