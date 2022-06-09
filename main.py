@@ -13,7 +13,7 @@ plt.style.use([
 
 z1_min, z1_max = -1, 1
 z2_min, z2_max = 0, 1
-z3_min, z3_max = -2*np.pi, 2*np.pi
+z3_min, z3_max = -6.2831775400855925, 6.2831775400855925
 
 A_matrices = [
   A(z1_min, z2_min, z3_min),
@@ -135,10 +135,6 @@ for i in range(1, iterations):
 
   theta_values[i] = np.array([x[0], x[2]]).T
   alpha_values[i] = np.array([x[1], x[3]]).T
-
-# saving the data
-np.save('theta_values.npy', theta_values)
-np.save('alpha_values.npy', alpha_values)
 
 fig1, axs = plt.subplots(2, 2, figsize=(10, 10))
 
