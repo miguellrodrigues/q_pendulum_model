@@ -50,19 +50,3 @@ def B(alpha):
 
 def var_dot(prev_dot, prev_var, var):
   return (.9048 * prev_dot) + (95.24 * var) - (95.24 * prev_var)
-
-
-def load_matrices(continuous=False):
-  f = './data/'
-
-  if continuous:
-    f += 'continuous_system/'
-  else:
-    f += 'discrete_system/'
-
-  _A = np.load(f + 'A.npy')
-  _B = np.load(f + 'B.npy')
-  _C = np.load(f + 'C.npy')
-  _D = np.load(f + 'D.npy')
-
-  return _A, _B, _C, _D

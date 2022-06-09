@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from system import load_matrices, var_dot, A, B
-from controller import find_controller
+from system import A, B
+
 
 plt.style.use([
   'science',
