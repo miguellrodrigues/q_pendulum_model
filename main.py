@@ -49,7 +49,7 @@ u = np.array([
 
 for i in range(1, samples):
   alpha = x[1][0]
-  alpha_dot = np.clip(x[3][0], -6.2831775400855925, 6.2831775400855925)
+  alpha_dot = x[3][0]
 
   _A = A(alpha, alpha_dot)
 
@@ -57,7 +57,7 @@ for i in range(1, samples):
   x += delta_sys * simulation_step
 
   theta_values[i] = np.array([x[0], x[2]]).T
-  alpha_values[i] = np.array([x[1], x[3]]).T
+  alpha_values[i] = np.array([x[1], np.clip(x[3], -6.2831775400855925, 6.2831775400855925)]).T
 
 # saving the data
 np.save('nl_theta_values.npy', theta_values)
