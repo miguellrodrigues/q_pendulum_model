@@ -101,7 +101,7 @@ u = np.array([
 
 for i in range(1, samples):
   alpha = alpha_values[i - 1, 0]
-  alpha_dot = np.clip(alpha_values[i - 1, 1], z3_min, z3_max)
+  alpha_dot = alpha_values[i - 1, 1]
 
   # calculating the pertinence functions activation values
 
@@ -132,7 +132,7 @@ for i in range(1, samples):
   x += delta_system * simulation_step
 
   theta_values[i] = np.array([x[0], x[2]]).T
-  alpha_values[i] = np.array([x[1], x[3]]).T
+  alpha_values[i] = np.array([x[1], np.clip(x[3], z3_min, z3_max)]).T
 
 fig1, axs = plt.subplots(2, 2, figsize=(10, 10))
 
