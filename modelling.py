@@ -1,8 +1,8 @@
 import sympy as sp
 
-
 # E = T + V
 # L = T - V
+
 
 kt, km, vm, rm = sp.symbols('K_t K_m V_m R_m')
 theta, alpha = sp.symbols('theta alpha', cls=sp.Function)
@@ -50,42 +50,11 @@ solutions = sp.solve(
 sol_theta = sp.simplify(solutions[d2_theta])
 sol_alpha = sp.simplify(solutions[d2_alpha])
 
-E1 = sol_theta - tal + Beq*theta_dot
-E2 = sol_alpha + Bp*alpha_dot
-
-# Auxiliar Variables
-a, b, c, d, e = sp.symbols('a b c d e')
-
-_a = Mp*lp**2
-_b = Mp*lp*r
-_c = Jeq*Jp
-_d = Mp*g*lp
-
-simplified_e1 = E1.subs({
-  _a: a,
-  _b: b,
-  _c: c,
-  _d: d,
-})
-
-simplified_e2 = E2.subs({
-  _a: a,
-  _b: b,
-  _c: c,
-  _d: d,
-})
-
-sp.print_latex(
-  sp.simplify(simplified_e1),
-)
+E1 = sp.Eq(sol_theta, -tal + Beq*theta_dot)
+E2 = sp.Eq(sol_alpha, Bp*alpha_dot)
 
 print(' ')
-
-sp.print_latex(
-  sp.simplify(simplified_e2),
-)
-
+sp.print_latex(E1)
 print(' ')
-
-
-
+sp.print_latex(E2)
+print(' ')
