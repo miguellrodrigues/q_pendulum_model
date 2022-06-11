@@ -20,15 +20,15 @@ plt.rcParams['font.size'] = 12
 
 initial_condition = np.array([
   [.0],
-  [.00001],
+  [-np.pi/2],
   [.0],
   [.0]
 ])
 
 x = np.copy(initial_condition)
 
-samples = 10000
-simulation_step = 1e-3
+samples = 100000
+simulation_step = 1e-4
 
 time = np.arange(0, samples*simulation_step, simulation_step)
 
@@ -57,7 +57,7 @@ for i in range(1, samples):
   x += delta_sys * simulation_step
 
   theta_values[i] = np.array([x[0], x[2]]).T
-  alpha_values[i] = np.array([x[1], np.clip(x[3], -6.2831775400855925, 6.2831775400855925)]).T
+  alpha_values[i] = np.array([x[1], x[3]]).T
 
 # saving the data
 np.save('nl_theta_values.npy', theta_values)
